@@ -11,3 +11,18 @@ More information about BareMetal can be found on the BareMetal homepage at [Retu
 lwIP is an open source implementation of the TCP/IP protocol suite that was originally written by [Adam Dunkels](http://www.sics.se/~adam/) of the Swedish Institute of Computer Science but now is being actively improved upon by a team of developers throughout the world.
 
 More information about lwIP can be found at the [lwIP homepage](http://savannah.nongnu.org/projects/lwip/).
+
+## Building the web server
+
+  git clone https://github.com/ReturnInfinity/BareMetal-lwIP.git
+  cd BareMetal-lwIP
+  make
+
+## Changing the web content
+
+The web page content is in httpd_raw/fs/ so make all changes there.
+
+  cd httpd_raw
+  perl makefsdata/makefsdata -s
+  cd ..
+  make
