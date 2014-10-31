@@ -2,7 +2,7 @@
 
 ## A lightweight TCP/IP stack running on an ultra-lightweight kernel
 
-This web page you are reading was served by a simple web server running on top of the lightweight TCP/IP stack [lwIP](http://savannah.nongnu.org/projects/lwip/), which in turn is running on top of [BareMetal](http://www.returninfinity.com/baremetal.html). The BareMetal binary is a mere 16,384 bytes and the web server application is appoximately 170,000 bytes.
+This is a quick and simple proof of concept web server running on top of the lightweight TCP/IP stack [lwIP](http://savannah.nongnu.org/projects/lwip/), which in turn is running on top of [BareMetal](http://www.returninfinity.com/baremetal.html). The BareMetal binary is a mere 16,384 bytes and the web server application is appoximately 170,000 bytes.
 
 BareMetal is a new [Exokernel](http://en.wikipedia.org/wiki/Exokernel) for 64-bit x86-based systems. The kernel, as well as its various device drivers, are written entirely in Assembly for optimal speed, simplicity, and manageability of the code. BareMetal provides raw access to the underlying hardware in order to allow for maximum performance. Applications can be specifically tailored to focus on where performance is needed the most.
 
