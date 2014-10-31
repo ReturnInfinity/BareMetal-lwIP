@@ -14,15 +14,15 @@ More information about lwIP can be found at the [lwIP homepage](http://savannah.
 
 ## Building the web server
 
-  git clone https://github.com/ReturnInfinity/BareMetal-lwIP.git
-  cd BareMetal-lwIP
-  make
+	git clone https://github.com/ReturnInfinity/BareMetal-lwIP.git
+	cd BareMetal-lwIP
+	make
 
 ## Changing the web content
 
 The web page content is in httpd_raw/fs/ so make all changes there.
 
-  cd httpd_raw
-  perl makefsdata/makefsdata -s
-  cd ..
-  make
+	cd httpd_raw
+	perl makefsdata/makefsdata -s
+	cd ..
+	make
