@@ -51,7 +51,7 @@
  * and the contents must be ready after fs_open().
  */
 #ifndef LWIP_HTTPD_DYNAMIC_FILE_READ
-#define LWIP_HTTPD_DYNAMIC_FILE_READ  1
+#define LWIP_HTTPD_DYNAMIC_FILE_READ  0
 #endif
 
 /** Set this to 1 to include an application state argument per file

@@ -44,15 +44,8 @@ extern "C" {
  * of IP_FRAG */
 #define LWIP_SUPPORT_CUSTOM_PBUF (IP_FRAG && !IP_FRAG_USES_STATIC_BUF && !LWIP_NETIF_TX_SINGLE_PBUF)
 
-/* @todo: We need a mechanism to prevent wasting memory in every pbuf
-   (TCP vs. UDP, IPv4 vs. IPv6: UDP/IPv4 packets may waste up to 28 bytes) */
-
 #define PBUF_TRANSPORT_HLEN 20
-#if LWIP_IPV6
-#define PBUF_IP_HLEN        40
-#else
 #define PBUF_IP_HLEN        20
-#endif
 
 typedef enum {
   PBUF_TRANSPORT,
@@ -136,7 +129,7 @@ struct pbuf_custom {
 #endif /* PBUF_POOL_FREE_OOSEQ */
 #if NO_SYS && PBUF_POOL_FREE_OOSEQ
 extern volatile u8_t pbuf_free_ooseq_pending;
-void pbuf_free_ooseq(void);
+void pbuf_free_ooseq();
 /** When not using sys_check_timeouts(), call PBUF_CHECK_FREE_OOSEQ()
     at regular intervals from main level to check if ooseq pbufs need to be
     freed! */

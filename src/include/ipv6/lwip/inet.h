@@ -29,44 +29,40 @@
  * Author: Adam Dunkels <adam@sics.se>
  *
  */
+#ifndef __LWIP_INET_H__
+#define __LWIP_INET_H__
 
 #include "lwip/opt.h"
+#include "lwip/pbuf.h"
 #include "lwip/ip_addr.h"
-#include "lwip/inet.h"
 
-u8_t
-ip_addr_netcmp(struct ip_addr *addr1, struct ip_addr *addr2,
-                struct ip_addr *mask)
-{
-  return((addr1->addr[0] & mask->addr[0]) == (addr2->addr[0] & mask->addr[0]) &&
-         (addr1->addr[1] & mask->addr[1]) == (addr2->addr[1] & mask->addr[1]) &&
-         (addr1->addr[2] & mask->addr[2]) == (addr2->addr[2] & mask->addr[2]) &&
-         (addr1->addr[3] & mask->addr[3]) == (addr2->addr[3] & mask->addr[3]));
-        
-}
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-u8_t
-ip_addr_cmp(struct ip_addr *addr1, struct ip_addr *addr2)
-{
-  return(addr1->addr[0] == addr2->addr[0] &&
-         addr1->addr[1] == addr2->addr[1] &&
-         addr1->addr[2] == addr2->addr[2] &&
-         addr1->addr[3] == addr2->addr[3]);
-}
+u16_t inet_chksum(void *data, u16_t len);
+u16_t inet_chksum_pbuf(struct pbuf *p);
+u16_t inet_chksum_pseudo(struct pbuf *p,
+       struct ip_addr *src, struct ip_addr *dest,
+       u8_t proto, u32_t proto_len);
 
-void
-ip_addr_set(struct ip_addr *dest, struct ip_addr *src)
-{
-  SMEMCPY(dest, src, sizeof(struct ip_addr));
-  /*  dest->addr[0] = src->addr[0];
-  dest->addr[1] = src->addr[1];
-  dest->addr[2] = src->addr[2];
-  dest->addr[3] = src->addr[3];*/
-}
+u32_t inet_addr(const char *cp);
+s8_t inet_aton(const char *cp, struct in_addr *addr);
 
-u8_t
-ip_addr_isany(struct ip_addr *addr)
-{
-  if (addr == NULL) return 1;
-  return((addr->addr[0] | addr->addr[1] | addr->addr[2] | addr->addr[3]) == 0);
+#ifndef _MACHINE_ENDIAN_H_
+#ifndef _NETINET_IN_H
+#ifndef _LINUX_BYTEORDER_GENERIC_H
+u16_t htons(u16_t n);
+u16_t ntohs(u16_t n);
+u32_t htonl(u32_t n);
+u32_t ntohl(u32_t n);
+#endif /* _LINUX_BYTEORDER_GENERIC_H */
+#endif /* _NETINET_IN_H */
+#endif /* _MACHINE_ENDIAN_H_ */
+
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* __LWIP_INET_H__ */
+

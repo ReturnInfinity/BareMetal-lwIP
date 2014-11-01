@@ -250,6 +250,8 @@ static void pppFreeCurrentInputPacket(PPPControlRx *pcrx);
 /******************************/
 /*** PUBLIC DATA STRUCTURES ***/
 /******************************/
+u_long subnetMask;
+
 static PPPControl pppControl[NUM_PPP]; /* The PPP interface control blocks. */
 
 /*
@@ -444,6 +446,8 @@ pppInit(void)
   pppSetAuth(PPPAUTHTYPE_NONE, NULL, NULL);
 
   magicInit();
+
+  subnetMask = PP_HTONL(0xffffff00UL);
 
   for (i = 0; i < NUM_PPP; i++) {
     /* Initialize each protocol to the standard option set. */
@@ -1278,7 +1282,7 @@ GetMask(u32_t addr)
   }
 
   /* class D nets are disallowed by bad_ip_adrs */
-  mask = PP_HTONL(0xffffff00UL) | htonl(nmask);
+  mask = subnetMask | htonl(nmask);
   
   /* XXX
    * Scan through the system's network interfaces.
@@ -1586,21 +1590,10 @@ pppSingleBuf(struct pbuf *p)
   return q;
 }
 
-/** Input helper struct, must be packed since it is stored to pbuf->payload,
- * which might be unaligned.
- */
-#ifdef PACK_STRUCT_USE_INCLUDES
-#  include "arch/bpstruct.h"
-#endif
-PACK_STRUCT_BEGIN
 struct pppInputHeader {
-  PACK_STRUCT_FIELD(int unit);
-  PACK_STRUCT_FIELD(u16_t proto);
-} PACK_STRUCT_STRUCT;
-PACK_STRUCT_END
-#ifdef PACK_STRUCT_USE_INCLUDES
-#  include "arch/epstruct.h"
-#endif
+  int unit;
+  u16_t proto;
+};
 
 /*
  * Pass the processed input packet to the appropriate handler.
@@ -1832,7 +1825,7 @@ pppInProc(PPPControlRx *pcrx, u_char *s, int l)
         } else {
           struct pbuf *inp;
           /* Trim off the checksum. */
-          if(pcrx->inTail->len > 2) {
+          if(pcrx->inTail->len >= 2) {
             pcrx->inTail->len -= 2;
 
             pcrx->inTail->tot_len = pcrx->inTail->len;

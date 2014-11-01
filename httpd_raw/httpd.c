@@ -92,7 +92,7 @@
 #if LWIP_TCP
 
 #ifndef HTTPD_DEBUG
-#define HTTPD_DEBUG         LWIP_DBG_ON | LWIP_DBG_TRACE
+#define HTTPD_DEBUG         LWIP_DBG_OFF
 #endif
 
 /** Set this to 1 and add the next line to lwippools.h to use a memp pool
@@ -158,7 +158,7 @@
  * include the "Connection: keep-alive" header (pass argument "-11" to makefsdata).
  */
 #ifndef LWIP_HTTPD_SUPPORT_11_KEEPALIVE
-#define LWIP_HTTPD_SUPPORT_11_KEEPALIVE     1
+#define LWIP_HTTPD_SUPPORT_11_KEEPALIVE     0
 #endif
 
 /** Set this to 1 to support HTTP request coming in in multiple packets/pbufs */
@@ -632,7 +632,7 @@ http_write(struct tcp_pcb *pcb, const void* ptr, u16_t *length, u8_t apiflags)
    if (err == ERR_OK) {
      LWIP_DEBUGF(HTTPD_DEBUG | LWIP_DBG_TRACE, ("Sent %d bytes\n", len));
    } else {
-     LWIP_DEBUGF(HTTPD_DEBUG | LWIP_DBG_TRACE, ("Send failed with err %d \n", err));
+     LWIP_DEBUGF(HTTPD_DEBUG | LWIP_DBG_TRACE, ("Send failed with err %d (\"%s\")\n", err, lwip_strerr(err)));
    }
 
    *length = len;
@@ -1729,6 +1729,7 @@ http_post_request(struct pbuf **inp, struct http_state *hs,
       if (scontent_len_end != NULL) {
         int content_len;
         char *conten_len_num = scontent_len + HTTP_HDR_CONTENT_LEN_LEN;
+        *scontent_len_end = 0;
         content_len = atoi(conten_len_num);
         if (content_len > 0) {
           /* adjust length of HTTP header passed to application */
@@ -2213,8 +2214,7 @@ http_err(void *arg, err_t err)
   struct http_state *hs = (struct http_state *)arg;
   LWIP_UNUSED_ARG(err);
 
-  //LWIP_DEBUGF(HTTPD_DEBUG, ("http_err: %s", lwip_strerr(err)));
-  LWIP_DEBUGF(HTTPD_DEBUG, ("http_err"));
+  LWIP_DEBUGF(HTTPD_DEBUG, ("http_err: %s", lwip_strerr(err)));
 
   if (hs != NULL) {
     http_state_free(hs);
@@ -2305,8 +2305,8 @@ http_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err)
 {
   err_t parsed = ERR_ABRT;
   struct http_state *hs = (struct http_state *)arg;
-  LWIP_DEBUGF(HTTPD_DEBUG | LWIP_DBG_TRACE, ("http_recv: pcb=%p pbuf=%p \n", (void*)pcb,
-    (void*)p));
+  LWIP_DEBUGF(HTTPD_DEBUG | LWIP_DBG_TRACE, ("http_recv: pcb=%p pbuf=%p err=%s\n", (void*)pcb,
+    (void*)p, lwip_strerr(err)));
 
   if ((err != ERR_OK) || (p == NULL) || (hs == NULL)) {
     /* error or closed by other side? */

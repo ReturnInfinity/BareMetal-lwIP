@@ -65,8 +65,8 @@
 #define LWIP_HTTPD_SSI             1
 #include "../httpd_structs.h"
 
-#include "../core/inet_chksum.c"
-#include "../core/def.c"
+#include "../../../../lwip/src/core/ipv4/inet_chksum.c"
+#include "../../../../lwip/src/core/def.c"
 
 /** (Your server name here) */
 const char *serverID = "Server: "HTTPD_SERVER_AGENT"\r\n";
@@ -84,12 +84,6 @@ static int payload_alingment_dummy_counter = 0;
 #define MAX_PATH_LEN 256
 
 #define COPY_BUFSIZE 10240
-
-struct file_entry
-{
-   struct file_entry* next;
-   const char* filename_c;
-};
 
 int process_sub(FILE *data_file, FILE *struct_file);
 int process_file(FILE *data_file, FILE *struct_file, const char *filename);
@@ -112,9 +106,6 @@ unsigned char includeHttpHeader = 1;
 unsigned char useHttp11 = 0;
 unsigned char supportSsi = 1;
 unsigned char precalcChksum = 0;
-
-struct file_entry* first_file = NULL;
-struct file_entry* last_file = NULL;
 
 int main(int argc, char *argv[])
 {
@@ -231,12 +222,6 @@ int main(int argc, char *argv[])
   remove("fshdr.tmp"); 
 
   printf(NEWLINE "Processed %d files - done." NEWLINE NEWLINE, filesProcessed);
-
-  while (first_file != NULL) {
-     struct file_entry* fe = first_file;
-     first_file = fe->next;
-     free(fe);
-  }
 
   return 0;
 }
@@ -402,71 +387,9 @@ int write_checksums(FILE *struct_file, const char *filename, const char *varname
   return i;
 }
 
-static int is_valid_char_for_c_var(char x)
-{
-   if (((x >= 'A') && (x <= 'Z')) ||
-       ((x >= 'a') && (x <= 'z')) ||
-       ((x >= '0') && (x <= '9')) ||
-        (x == '_'))
-   {
-      return 1;
-   }
-   return 0;
-}
-
-static void fix_filename_for_c(char* qualifiedName, size_t max_len)
-{
-   struct file_entry* f;
-   size_t len = strlen(qualifiedName);
-   char *new_name = malloc(len + 2);
-   int filename_ok;
-   int cnt = 0;
-   size_t i;
-   if (len + 3 == max_len) {
-      printf("File name too long: \"%s\"\n", qualifiedName);
-      exit(-1);
-   }
-   strcpy(new_name, qualifiedName);
-   for (i = 0; i < len; i++) {
-      if (!is_valid_char_for_c_var(new_name[i])) {
-         new_name[i] = '_';
-      }
-   }
-   do {
-      filename_ok = 1;
-      for (f = first_file; f != NULL; f = f->next) {
-         if (!strcmp(f->filename_c, new_name)) {
-            filename_ok = 0;
-            cnt++;
-            // try next unique file name
-            sprintf(&new_name[len], "%d", cnt);
-            break;
-         }
-      }
-   } while (!filename_ok && (cnt < 999));
-   if (!filename_ok) {
-      printf("Failed to get unique file name: \"%s\"\n", qualifiedName);
-      exit(-1);
-   }
-   strcpy(qualifiedName, new_name);
-   free(new_name);
-}
-
-static void register_filename(const char* qualifiedName)
-{
-   struct file_entry* fe = malloc(sizeof(struct file_entry));
-   fe->filename_c = strdup(qualifiedName);
-   fe->next = NULL;
-   if (first_file == NULL) {
-      first_file = last_file = fe;
-   } else {
-      last_file->next = fe;
-      last_file = fe;
-   }
-}
-
 int process_file(FILE *data_file, FILE *struct_file, const char *filename)
 {
+  char *pch;
   char varname[MAX_PATH_LEN];
   int i = 0;
   char qualifiedName[MAX_PATH_LEN];
@@ -480,8 +403,9 @@ int process_file(FILE *data_file, FILE *struct_file, const char *filename)
   /* create C variable name */
   strcpy(varname, qualifiedName);
   /* convert slashes & dots to underscores */
-  fix_filename_for_c(varname, MAX_PATH_LEN);
-  register_filename(varname);
+  while ((pch = strpbrk(varname, "./\\")) != NULL) {
+    *pch = '_';
+  }
 #if ALIGN_PAYLOAD
   /* to force even alignment of array */
   fprintf(data_file, "static const " PAYLOAD_ALIGN_TYPE " dummy_align_%s = %d;" NEWLINE, varname, payload_alingment_dummy_counter++);

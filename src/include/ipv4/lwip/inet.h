@@ -40,14 +40,9 @@
 extern "C" {
 #endif
 
-/* If your port already typedef's in_addr_t, define IN_ADDR_T_DEFINED
-   to prevent this code from redefining it. */
-#if !defined(in_addr_t) && !defined(IN_ADDR_T_DEFINED)
-typedef u32_t in_addr_t;
-#endif
 /** For compatibility with BSD code */
 struct in_addr {
-  in_addr_t s_addr;
+  u32_t s_addr;
 };
 
 /** 255.255.255.255 */

@@ -55,7 +55,6 @@
 #include "lwip/dhcp.h"
 #include "lwip/autoip.h"
 #include "netif/etharp.h"
-#include "lwip/ip6.h"
 
 #if PPPOE_SUPPORT
 #include "netif/ppp_oe.h"
@@ -208,7 +207,7 @@ etharp_tmr(void)
 {
   u8_t i;
 
-  //LWIP_DEBUGF(ETHARP_DEBUG, ("etharp_timer\n"));
+  LWIP_DEBUGF(ETHARP_DEBUG, ("etharp_timer\n"));
   /* remove expired entries from the ARP table */
   for (i = 0; i < ARP_TABLE_SIZE; ++i) {
     u8_t state = arp_table[i].state;
@@ -1283,11 +1282,6 @@ ethernet_input(struct pbuf *p, struct netif *netif)
   s16_t ip_hdr_offset = SIZEOF_ETH_HDR;
 #endif /* LWIP_ARP || ETHARP_SUPPORT_VLAN */
 
-
-	//LWIP_PLATFORM_DIAG("debug test from ethernet_input() 0x%x\n", type);
-	//printf("debug test from ethernet_input() 0x%x\n", type);
-
-
   if (p->len <= SIZEOF_ETH_HDR) {
     /* a packet with only an ethernet header (or less) is not valid for us */
     ETHARP_STATS_INC(etharp.proterr);
@@ -1387,19 +1381,6 @@ ethernet_input(struct pbuf *p, struct netif *netif)
       pppoe_data_input(netif, p);
       break;
 #endif /* PPPOE_SUPPORT */
-
-#if LWIP_IPV6
-    case PP_HTONS(ETHTYPE_IPV6): /* IPv6 */
-      /* skip Ethernet header */
-      if(pbuf_header(p, -(s16_t)SIZEOF_ETH_HDR)) {
-        LWIP_ASSERT("Can't move over header in packet", 0);
-        goto free_and_return;
-      } else {
-        /* pass to IPv6 layer */
-        ip6_input(p, netif);
-      }
-      break;
-#endif /* LWIP_IPV6 */
 
     default:
       ETHARP_STATS_INC(etharp.proterr);

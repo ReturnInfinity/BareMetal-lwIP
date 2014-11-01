@@ -5,7 +5,7 @@
 
 /** This string is passed in the HTTP header as "Server: " */
 #ifndef HTTPD_SERVER_AGENT
-#define HTTPD_SERVER_AGENT "lwIP/1.4.0 (http://savannah.nongnu.org/projects/lwip)"
+#define HTTPD_SERVER_AGENT "lwIP/1.4.1 (http://savannah.nongnu.org/projects/lwip)"
 #endif
 
 /** Set this to 1 if you want to include code that creates HTTP headers
@@ -14,7 +14,7 @@
  * the (readonly) fsdata will grow a bit as every file includes the HTTP
  * header. */
 #ifndef LWIP_HTTPD_DYNAMIC_HEADERS
-#define LWIP_HTTPD_DYNAMIC_HEADERS 1
+#define LWIP_HTTPD_DYNAMIC_HEADERS 0
 #endif
 
 

@@ -42,61 +42,24 @@
 
 #include "lwip/ip_addr.h"
 #include "lwip/inet.h"
-#include "lwip/inet6.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* If your port already typedef's sa_family_t, define SA_FAMILY_T_DEFINED
-   to prevent this code from redefining it. */
-#if !defined(sa_family_t) && !defined(SA_FAMILY_T_DEFINED)
-typedef u8_t sa_family_t;
-#endif
-/* If your port already typedef's in_port_t, define IN_PORT_T_DEFINED
-   to prevent this code from redefining it. */
-#if !defined(in_port_t) && !defined(IN_PORT_T_DEFINED)
-typedef u16_t in_port_t;
-#endif
-
 /* members are in network byte order */
 struct sockaddr_in {
-  u8_t            sin_len;
-  sa_family_t     sin_family;
-  in_port_t       sin_port;
-  struct in_addr  sin_addr;
-#define SIN_ZERO_LEN 8
-  char            sin_zero[SIN_ZERO_LEN];
+  u8_t sin_len;
+  u8_t sin_family;
+  u16_t sin_port;
+  struct in_addr sin_addr;
+  char sin_zero[8];
 };
-
-#if LWIP_IPV6
-struct sockaddr_in6 {
-  u8_t            sin6_len;      /* length of this structure */
-  sa_family_t     sin6_family;   /* AF_INET6                 */
-  in_port_t       sin6_port;     /* Transport layer port #   */
-  u32_t           sin6_flowinfo; /* IPv6 flow information    */
-  struct in6_addr sin6_addr;     /* IPv6 address             */
-};
-#endif /* LWIP_IPV6 */
 
 struct sockaddr {
-  u8_t        sa_len;
-  sa_family_t sa_family;
-#if LWIP_IPV6
-  char        sa_data[22];
-#else /* LWIP_IPV6 */
-  char        sa_data[14];
-#endif /* LWIP_IPV6 */
-};
-
-struct sockaddr_storage {
-  u8_t        s2_len;
-  sa_family_t ss_family;
-  char        s2_data1[2];
-  u32_t       s2_data2[3];
-#if LWIP_IPV6
-  u32_t       s2_data3[2];
-#endif /* LWIP_IPV6 */
+  u8_t sa_len;
+  u8_t sa_family;
+  char sa_data[14];
 };
 
 /* If your port already typedef's socklen_t, define SOCKLEN_T_DEFINED
@@ -157,21 +120,12 @@ struct linger {
 
 #define AF_UNSPEC       0
 #define AF_INET         2
-#if LWIP_IPV6
-#define AF_INET6        10
-#else /* LWIP_IPV6 */
-#define AF_INET6        AF_UNSPEC
-#endif /* LWIP_IPV6 */
 #define PF_INET         AF_INET
-#define PF_INET6        AF_INET6
 #define PF_UNSPEC       AF_UNSPEC
 
 #define IPPROTO_IP      0
 #define IPPROTO_TCP     6
 #define IPPROTO_UDP     17
-#if LWIP_IPV6
-#define IPPROTO_IPV6    41
-#endif /* LWIP_IPV6 */
 #define IPPROTO_UDPLITE 136
 
 /* Flags we can use with send and recv. */
@@ -198,13 +152,6 @@ struct linger {
 #define TCP_KEEPINTVL  0x04    /* set pcb->keep_intvl - Use seconds for get/setsockopt */
 #define TCP_KEEPCNT    0x05    /* set pcb->keep_cnt   - Use number of probes sent for get/setsockopt */
 #endif /* LWIP_TCP */
-
-#if LWIP_IPV6
-/*
- * Options for level IPPROTO_IPV6
- */
-#define IPV6_V6ONLY 27 /* RFC3493: boolean control to restrict AF_INET6 sockets to IPv6 communications only. */
-#endif /* LWIP_IPV6 */
 
 #if LWIP_UDP && LWIP_UDPLITE
 /*

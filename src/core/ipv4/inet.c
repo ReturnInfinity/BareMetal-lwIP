@@ -1,11 +1,11 @@
 /**
  * @file
+ * Functions common to all TCP/IPv4 modules, such as the byte order functions.
  *
- * IPv6 address autoconfiguration as per RFC 4862.
  */
 
 /*
- * Copyright (c) 2010 Inico Technologies Ltd.
+ * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -32,27 +32,11 @@
  *
  * This file is part of the lwIP TCP/IP stack.
  *
- * Author: Ivan Delamer <delamer@inicotech.com>
+ * Author: Adam Dunkels <adam@sics.se>
  *
- * IPv6 address autoconfiguration as per RFC 4862.
- *
- * Please coordinate changes and requests with Ivan Delamer
- * <delamer@inicotech.com>
  */
-
-#ifndef __LWIP_IP6_DHCP6_H__
-#define __LWIP_IP6_DHCP6_H__
 
 #include "lwip/opt.h"
 
-#if LWIP_IPV6_DHCP6  /* don't build if not configured for use in lwipopts.h */
+#include "lwip/inet.h"
 
-
-struct dhcp6
-{
-  /*TODO: implement DHCP6*/
-};
-
-#endif /* LWIP_IPV6_DHCP6 */
-
-#endif /* __LWIP_IP6_DHCP6_H__ */

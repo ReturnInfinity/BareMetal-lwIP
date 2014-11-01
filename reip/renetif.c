@@ -6,7 +6,7 @@
 #include "lwip/pbuf.h"
 #include "lwip/stats.h"
 #include "lwip/snmp.h"
-#include "lwip/ethip6.h"
+//#include "lwip/ethip6.h"
 #include "netif/etharp.h"
 #include "renetif.h"
 
@@ -154,7 +154,7 @@ void reif_input(struct netif *netif, char *pkt, int len)
 	{
 		/* IP or ARP packet? */
 		case ETHTYPE_IP:
-		case ETHTYPE_IPV6:
+		//case ETHTYPE_IPV6:
 		case ETHTYPE_ARP:
 			/* full packet send to tcpip_thread to process */
 			if (netif->input(p, netif) != ERR_OK)
