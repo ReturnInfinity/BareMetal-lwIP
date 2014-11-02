@@ -18,6 +18,20 @@ More information about lwIP can be found at the [lwIP homepage](http://savannah.
 	cd BareMetal-lwIP
 	make
 
+The resulting `httpd.app` binary can be added to the BareMetal OS disk iamge.
+
+## Running the web server
+
+`httpd.app` takes 3 arguments - IP address, subnet, and gateway.
+
+	> httpd.app 10.0.0.100 255.255.255.0 10.0.0.1
+
+Without arguments the app will use the following:
+
+- IP: 192.168.242.2
+- SN: 255.255.255.0
+- GW: 192.168.242.1
+
 ## Changing the web content
 
 The web page content is in httpd_raw/fs/ so make all changes there.
