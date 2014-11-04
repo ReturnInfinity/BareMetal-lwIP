@@ -94,7 +94,7 @@ int reip_init(int n_args, char **args)
 	netif_set_default(&redrv_netif);
 	netif_set_up(&redrv_netif);
 
-	printf("iface is %s \n", netif_is_up(&redrv_netif) ? "UP" : "DOWN");
+	printf("Interface is %s \n", netif_is_up(&redrv_netif) ? "UP" : "DOWN");
 
 	return 0;
 }

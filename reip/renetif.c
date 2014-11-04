@@ -48,7 +48,9 @@ err_t reif_ll_output(struct netif *netif, struct pbuf *p)
 		   variable. */
 		if (q->payload && q->len)
 		{
+		#if DEBUG
 			printf("pbuf %d . len: %d used: %d \n", i++, q->len, used);
+		#endif
 			memcpy(packet + used, q->payload, q->len);
 			used += q->len;
 			if (used > ETH_PKT_SIZE)
@@ -60,7 +62,9 @@ err_t reif_ll_output(struct netif *netif, struct pbuf *p)
 		}
 	}
 	b_ethernet_tx(packet, used);
+#if DEBUG
 	printf("TX. len: %d total: %u\n", used, stats.tx++);
+#endif
 
 #if ETH_PAD_SIZE
 	pbuf_header(p, ETH_PAD_SIZE); /* reclaim the padding word */
@@ -111,7 +115,9 @@ static struct pbuf* reif_ll_input(struct netif *netif, char *pkt, int pkt_len)
 		*/
 			memcpy(q->payload, pkt, q->len);
 			stats.rx++;
+		#if DEBUG
 			printf("RX. len: %d total: %u\n", q->len, stats.rx);
+		#endif
 		}
 #if ETH_PAD_SIZE
 	pbuf_header(p, ETH_PAD_SIZE); /* reclaim the padding word */
@@ -177,7 +183,6 @@ static void reif_ll_init(struct netif *netif)
 
 	unsigned long mac;
 	mac = b_system_config(30, 0);
-	printf("mac is: 0x%lX \n", mac);
 
 	/* set MAC address. XXX: this hardcode should be removed! */
 	netif->hwaddr[0] = 0x08;
@@ -186,6 +191,8 @@ static void reif_ll_init(struct netif *netif)
 	netif->hwaddr[3] = 0x51;
 	netif->hwaddr[4] = 0x28;
 	netif->hwaddr[5] = 0x16;
+
+	printf("MAC: %02X:%02X:%02X:%02X:%02X:%02X\n", netif->hwaddr[0], netif->hwaddr[1], netif->hwaddr[2], netif->hwaddr[3], netif->hwaddr[4], netif->hwaddr[5]);
 
 	/* MTU */
 	netif->mtu = ETH_PKT_SIZE;
@@ -201,7 +208,7 @@ err_t reif_init(struct netif *netif)
 	memset(&stats, 0x0, sizeof(struct stats_s));
 
 	if (netif)
-		printf("reif drv init is ok\n");
+		printf("reif drv init is OK\n");
 
 	reif = mem_malloc(sizeof(struct reif_s));
 	if (!reif)
