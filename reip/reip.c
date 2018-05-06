@@ -109,7 +109,7 @@ void reip_poll(void)
 	char packet[1500] = {0};
 	int len;
 
-	len = b_ethernet_rx(packet);
+	len = b_ethernet_rx(packet, 0);
 	if (len)
 	{
 		reif_input(&redrv_netif, packet, len);
