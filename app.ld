@@ -1,5 +1,5 @@
 OUTPUT_ARCH("i386:x86-64")
-ENTRY(start)
+ENTRY(_start)
 SECTIONS
 {
 	. = 0xffff800000000000;
@@ -8,6 +8,6 @@ SECTIONS
 	.bss : {
 		__bss_start = .;
 		*(.bss)
-		end = .; _end = .; __end = .;
+		__bss_stop = .;
 	}
 }
